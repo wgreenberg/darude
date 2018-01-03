@@ -1,22 +1,21 @@
 use std::io;
 
-mod ppm;
+mod shape;
+mod canvas;
 mod color;
 
-const SCREEN_HEIGHT: usize = 600;
-const SCREEN_WIDTH:  usize = 800;
+const HEIGHT: usize = 2000;
+const WIDTH:  usize = 2000;
 
 fn main() {
-    let mut buf: Vec<color::Color> = Vec::new();
-    for _ in 0..(SCREEN_WIDTH * SCREEN_HEIGHT) {
-        buf.push(color::rgb(128, 0, 0));
+    let mut shapes: Vec<shape::Circle> = Vec::new();
+    for i in 0..4 {
+        for j in 0..4 {
+            shapes.push(shape::new_circle(i as f32, j as f32, 7.0));
+        }
     }
 
-    let im = ppm::PPMFile {
-        height: SCREEN_HEIGHT,
-        width: SCREEN_WIDTH,
-        max: 255,
-        buf: buf,
-    };
-    im.write_to_file(&mut io::stdout());
+    let mut canvas = canvas::Canvas::new(HEIGHT, WIDTH, color::rgb(0, 0, 0));
+    canvas.rasterize_shapes(&shapes, color::rgba(255, 128, 255, 1.0));
+    canvas.write_as_ppm(&mut io::stdout());
 }
