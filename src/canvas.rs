@@ -62,12 +62,12 @@ impl Canvas {
         return raster_x as usize + (self.width * raster_y as usize);
     }
 
-    pub fn rasterize_shapes<T: Shape>(&mut self, shapes: &Vec<T>, color: Color) {
+    pub fn rasterize_shapes<T: Shape>(&mut self, shapes: &Vec<T>, color: Color, n_points: usize) {
         let max_bounds = find_maximal_bounds(&shapes);
         let mut rng = rand::thread_rng();
 
         for shape in shapes {
-            for p in shape.as_points(1000, &mut rng) {
+            for p in shape.as_points(n_points, &mut rng) {
                 let i = self.find_nearest_pixel(p, &max_bounds);
                 self.buf[i] = color.mix(&self.buf[i]);
             }

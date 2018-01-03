@@ -1,7 +1,15 @@
 [package]
-name = "rs-raytracer"
+name = "darude"
 version = "0.1.0"
 authors = ["Will Greenberg <ifnspifn@gmail.com>"]
+
+[lib]
+name = "darude"
+path = "src/lib.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
 
 [dependencies]
 rand = "0.3"
