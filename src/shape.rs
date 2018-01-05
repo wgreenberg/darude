@@ -1,7 +1,5 @@
-extern crate rand;
-
 use std::f32;
-use shape::rand::{ThreadRng};
+use rand::{ThreadRng};
 
 #[derive(PartialEq)]
 #[derive(Debug)]

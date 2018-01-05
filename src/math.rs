@@ -1,7 +1,5 @@
-extern crate rand;
-
 use shape::Point;
-use self::rand::{ThreadRng, Rng};
+use rand::{ThreadRng, Rng};
 
 pub fn clamp(t: f32, min: f32, max: f32) -> f32 {
     min.max(max.min(t))

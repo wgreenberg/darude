@@ -1,3 +1,5 @@
+extern crate rand;
+
 pub mod shape;
 pub mod canvas;
 pub mod color;

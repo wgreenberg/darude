@@ -1,6 +1,5 @@
-extern crate rand;
-
 use std::io;
+use rand;
 
 use color::{Color, MAX_CHANNEL};
 use shape::{Shape, Point, Bounds, find_maximal_bounds};
