@@ -52,7 +52,7 @@ impl Shape for Cardioid {
 
 fn main() {
     let mut shapes: Vec<Cardioid> = Vec::new();
-    let n = 3;
+    let n = 2;
     for i in 0..(n * n) {
         let x = (i % n) as f32;
         let y = (i / n) as f32;
@@ -61,7 +61,7 @@ fn main() {
 
     let mut canvas = Canvas::new(HEIGHT, WIDTH, rgb(0x07, 0x36, 0x42));
     eprintln!("rasterizing...");
-    canvas.rasterize_shapes(shapes, rgba(0x93, 0xa1, 0xa1, 0.05), 10_000_000);
+    canvas.rasterize_shapes(shapes, rgba(0x93, 0xa1, 0xa1, 0.25), 1_000_000);
     eprintln!("writing...");
     canvas.write_as_ppm(&mut io::stdout());
 }

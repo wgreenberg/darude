@@ -8,8 +8,8 @@ name = "darude"
 path = "src/lib.rs"
 
 [[bin]]
-name = "main"
-path = "src/main.rs"
+name = "cardioids"
+path = "examples/cardioids.rs"
 
 [dependencies]
 rand = "0.3"
