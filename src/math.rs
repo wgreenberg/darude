@@ -15,7 +15,7 @@ pub fn rlerp(rng: &mut ThreadRng, a: f32, b: f32, n_steps: usize) -> Vec<f32> {
     }).collect();
 }
 
-pub fn rlerp_point(rng: &mut ThreadRng, a: Point, b: Point, n_steps: usize) -> Vec<Point> {
+pub fn rlerp_point(rng: &mut ThreadRng, a: &Point, b: &Point, n_steps: usize) -> Vec<Point> {
     return rlerp(rng, 0.0, 1.0, n_steps).iter().map(|t| {
         Point {
             x: (1.0 - t) * a.x + t * b.x,

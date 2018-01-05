@@ -57,7 +57,7 @@ impl Canvas {
             };
         }
         let raster_x = scaled_p.x * (self.width - 1) as f32;
-        let raster_y = scaled_p.y * (self.height - 1) as f32;
+        let raster_y = (1.0 - scaled_p.y) * (self.height - 1) as f32;
 
         return raster_x as usize + (self.width * raster_y as usize);
     }

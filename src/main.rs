@@ -2,79 +2,66 @@ extern crate darude;
 extern crate rand;
 
 use std::io;
-use std::f32;
 
 use darude::shape::{Point, Shape, Bounds};
+use darude::primitives::{Circle, Line};
 use darude::color::{rgba, rgb};
 use darude::canvas::Canvas;
-use darude::math::{rlerp, rlerp_point};
-
-use rand::{ThreadRng, Rng};
+use rand::ThreadRng;
 
 const HEIGHT: usize = 2000;
 const WIDTH:  usize = 2000;
 
-pub struct Circle {
-    center: Point,
-    radius: f32,
+struct Cardioid {
+    circle: Circle,
+    order: usize,
 }
 
-pub fn new_circle(x: f32, y: f32, r: f32) -> Circle {
-    Circle {
-        center: Point { x: x, y: y },
-        radius: r,
+impl Cardioid {
+    pub fn new(center: Point, radius: f32, order: usize) -> Cardioid {
+        Cardioid {
+            circle: Circle { center: center, radius: radius },
+            order: order,
+        }
     }
 }
 
-impl Shape for Circle {
+impl Shape for Cardioid {
     fn as_points(&self, n_points: usize, rng: &mut ThreadRng) -> Vec<Point> {
-        let mut points: Vec<Point> = Vec::new();
         let n_lines = 10_000;
-        let n_cardioid_nodes = rng.gen_range(2, 8);
         let n_points_per_line = n_points / n_lines;
+        let c = &self.circle;
 
-        for rot in rlerp(rng, 0.0, 2.0 * f32::consts::PI, n_lines) {
-            // generate a chord along the edge of the circle
-            let p1 = Point { 
-                x: self.center.x + self.radius * rot.cos(),
-                y: self.center.y + self.radius * rot.sin(),
-            };
-            let p2rot = n_cardioid_nodes as f32 * rot;
+        let mut points: Vec<Point> = Vec::new();
+        for p1 in c.as_points(n_lines, rng) {
+            let rot = (p1.y - c.center.y).atan2(p1.x - c.center.x);
             let p2 = Point {
-                x: self.center.x + self.radius * p2rot.cos(),
-                y: self.center.y + self.radius * p2rot.sin(),
+                x: c.center.x + c.radius * (rot * self.order as f32).cos(),
+                y: c.center.y + c.radius * (rot * self.order as f32).sin(),
             };
-
-            // generate a series of points along the chord
-            points.append(&mut rlerp_point(rng, p1, p2, n_points_per_line));
+            points.append(&mut Line::new(p1, p2).as_points(n_points_per_line, rng));
         }
 
         return points;
     }
 
     fn find_bounds(&self) -> Bounds {
-        Bounds {
-            up_left: Point {
-                x: self.center.x - self.radius, 
-                y: self.center.y + self.radius,
-            },
-            down_right: Point {
-                x: self.center.x + self.radius,
-                y: self.center.y - self.radius,
-            },
-        }
+        self.circle.find_bounds()
     }
 }
 
 fn main() {
-    let mut shapes: Vec<Circle> = Vec::new();
-    for i in 0..1 {
-        for j in 0..1 {
-            shapes.push(new_circle(i as f32, j as f32, 0.5));
-        }
+    let mut shapes: Vec<Cardioid> = Vec::new();
+    let n = 3;
+    for i in 0..(n * n) {
+        let x = (i % n) as f32;
+        let y = (i / n) as f32;
+        shapes.push(Cardioid::new(Point { x: x, y: y }, 0.5, i + 2));
     }
 
-    let mut canvas = Canvas::new(HEIGHT, WIDTH, rgb(255, 255, 255));
-    canvas.rasterize_shapes(&shapes, rgba(0, 0, 0, 0.25), 1_000_000);
+    let mut canvas = Canvas::new(HEIGHT, WIDTH, rgb(0x07, 0x36, 0x42));
+    eprintln!("rasterizing...");
+    canvas.rasterize_shapes(shapes, rgba(0x93, 0xa1, 0xa1, 0.05), 10_000_000);
+    eprintln!("writing...");
     canvas.write_as_ppm(&mut io::stdout());
 }

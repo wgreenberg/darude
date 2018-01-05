@@ -1,4 +1,3 @@
-use std::f32;
 use rand::{ThreadRng};
 
 #[derive(PartialEq)]
