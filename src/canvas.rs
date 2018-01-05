@@ -71,7 +71,9 @@ impl Canvas {
             .collect();
 
         for i in pixels {
-            self.buf[i] = color.mix(&self.buf[i]);
+            if i < self.buf.len() {
+                self.buf[i] = color.mix(&self.buf[i]);
+            }
         }
     }
 }
