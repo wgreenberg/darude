@@ -33,6 +33,9 @@ impl Shape for Cardioid {
         let c = &self.circle;
 
         let mut points: Vec<Point> = Vec::new();
+        // for each point along the circle, draw a chord to 2x its distance from
+        // 0 degrees. Apparently this forms a cardioid:
+        // https://en.wikipedia.org/wiki/Cardioid#Cardioid_as_envelope_of_a_pencil_of_lines
         for p1 in c.as_points(n_lines, rng) {
             let rot = (p1.y - c.center.y).atan2(p1.x - c.center.x);
             let p2 = Point {
