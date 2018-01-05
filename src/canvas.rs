@@ -1,4 +1,5 @@
 use std::io;
+use rayon::prelude::*;
 use rand;
 
 use color::{Color, MAX_CHANNEL};
@@ -61,15 +62,16 @@ impl Canvas {
         return raster_x as usize + (self.width * raster_y as usize);
     }
 
-    pub fn rasterize_shapes<T: Shape>(&mut self, shapes: &Vec<T>, color: Color, n_points: usize) {
+    pub fn rasterize_shapes<T: Shape + Send>(&mut self, shapes: Vec<T>, color: Color, n_points: usize) {
         let max_bounds = find_maximal_bounds(&shapes);
-        let mut rng = rand::thread_rng();
 
-        for shape in shapes {
-            for p in shape.as_points(n_points, &mut rng) {
-                let i = self.find_nearest_pixel(p, &max_bounds);
-                self.buf[i] = color.mix(&self.buf[i]);
-            }
+        let pixels: Vec<usize> = shapes.into_par_iter()
+            .flat_map(|shape| shape.as_points(n_points, &mut rand::thread_rng()))
+            .map(|point| self.find_nearest_pixel(point, &max_bounds))
+            .collect();
+
+        for i in pixels {
+            self.buf[i] = color.mix(&self.buf[i]);
         }
     }
 }

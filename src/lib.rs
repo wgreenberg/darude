@@ -1,4 +1,5 @@
 extern crate rand;
+extern crate rayon;
 
 pub mod shape;
 pub mod canvas;
